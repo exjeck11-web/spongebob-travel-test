@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-// html2canvas import 제거 (현재 환경에서 불러오지 못하므로)
-// import html2canvas from 'html2canvas';
 
 // --- 스폰지밥 테마 질문 데이터 (완벽한 1:1 밸런스를 위해 12문제로 확장) ---
 // A(자연), R(여유), C(역사/문화), F(도시/트렌드)
@@ -34,7 +32,6 @@ const DEFAULT_RESULTS = {
   "C_R2": { type: "플랑크톤의 야생 매력", country: "남아프리카 공화국", code: "ZAF", flag: "🇿🇦", continent: "아프리카", spot: "테이블 마운틴", image: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?q=80&w=800&auto=format&fit=crop", reason: "이색적인 자연과 독특한 문화가 공존하는 곳을 찾는 당신! 평평한 테이블 마운틴에 올라 대서양과 아프리카 대륙이 만나는 절경을 감상하세요.", features: "희귀한 식물군, 대서양 뷰, 아프리카의 끝", mapX: 52, mapY: 82 },
   "F_R2": { type: "퐁퐁부인의 품격", country: "영국", code: "GBR", flag: "🇬🇧", continent: "서유럽", spot: "빅벤", image: "https://images.unsplash.com/photo-1520986606214-8b456906c813?q=80&w=800&auto=format&fit=crop", reason: "클래식하고 신사적인 멋을 아는 당신! 템스강 변을 따라 들려오는 빅벤의 웅장한 종소리를 들으며 런던 특유의 우아한 분위기를 만끽해 보세요.", features: "클래식 감성, 템스강, 영국 의회의 상징", mapX: 47, mapY: 26 }
 };
-
 
 // --- 공통 아이콘 ---
 const SettingsIcon = () => (
@@ -70,7 +67,6 @@ const MapIcon = () => (
 
 const IntroView = ({ onStart, onAdmin }) => (
   <div className="flex flex-col items-center justify-center h-full p-6 bg-gradient-to-b from-teal-400 via-cyan-500 to-blue-600 text-white relative">
-    {/* 거품 장식 */}
     <div className="absolute top-10 left-10 text-white/30 text-4xl animate-pulse">🫧</div>
     <div className="absolute bottom-32 right-12 text-white/20 text-5xl animate-bounce">🪼</div>
     
@@ -120,11 +116,9 @@ const LoadingView = () => (
 const QuizView = ({ question, index, total, onAnswer }) => {
   return (
     <div className="flex flex-col h-full bg-cyan-50 px-6 py-8 relative">
-       {/* 배경 장식 */}
        <div className="absolute top-20 right-5 text-cyan-100 text-6xl opacity-50">🌸</div>
        <div className="absolute bottom-40 left-5 text-cyan-100 text-5xl opacity-50">🌸</div>
 
-      {/* 진행 상태바 */}
       <div className="mb-8 relative z-10">
         <div className="flex justify-between text-sm font-black text-cyan-800 mb-2">
           <span>여정 진행률</span>
@@ -170,15 +164,58 @@ const ResultView = ({ result, onRestart }) => {
   const [isSharing, setIsSharing] = useState(false);
 
   const handleShare = async () => {
-    // 캡처 기능 임시 비활성화 안내 (Canvas 환경 오류로 인한 조치)
-    alert("현재 웹 미리보기 환경에서는 캡처 기능이 제한됩니다. 선생님의 VS Code에서 코드를 실행하시면 정상적으로 작동합니다! (html2canvas 설치 필요)");
+    if (!ticketRef.current || isSharing) return;
+    setIsSharing(true);
+    
+    try {
+      // html2canvas를 외부 CDN을 통해 동적으로 불러와 호환성 문제 완벽 해결!
+      if (!window.html2canvas) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+
+      const canvas = await window.html2canvas(ticketRef.current, { 
+        scale: 2, 
+        useCORS: true,
+        backgroundColor: '#cffafe' 
+      });
+      
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      const file = new File([blob], 'bikini_bottom_ticket.png', { type: 'image/png' });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: '마법의 소라고둥 추천 랜드마크',
+          text: `나에게 완벽한 여행지는 [${result.country} ${result.spot}] 입니다! 🍍`,
+          files: [file]
+        });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `스폰지밥_여행테스트_${result.country}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    } catch (err) {
+      console.log('Error sharing or capturing:', err);
+      alert("캡처 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요!");
+    } finally {
+      setIsSharing(false);
+    }
   };
 
   return (
     <div className="flex flex-col h-full bg-cyan-100 overflow-y-auto">
       <div className="min-h-max p-4 sm:p-6 pb-12 w-full flex flex-col items-center">
         
-        {/* === 캡처될 영역을 감싸는 div 추가 === */}
         <div ref={ticketRef} className="w-full flex flex-col items-center pb-4">
           <h2 className="text-center font-black text-cyan-800 mb-4 mt-2 tracking-widest text-sm drop-shadow-sm">
             🌟 YOUR BIKINI BOTTOM RESULT 🌟
@@ -227,7 +264,6 @@ const ResultView = ({ result, onRestart }) => {
                   alt={result.spot} 
                   crossOrigin="anonymous"
                   className="absolute inset-0 w-full h-full object-cover"
-                  // 비행기 날개 대신 멋진 자연 풍경(호수/산) 이미지로 대체!
                   onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800'; }}
                 />
               </div>
@@ -321,7 +357,6 @@ const ResultView = ({ result, onRestart }) => {
             </div>
           </div>
         </div>
-        {/* === 캡처될 영역 끝 === */}
 
         {/* 하단 버튼 */}
         <div className="mt-6 flex gap-3 mx-auto w-full max-w-[360px]">
@@ -369,7 +404,6 @@ const AdminView = ({ questions, results, onSave, onBack }) => {
           A(자연/액티비티), R(여유/휴양), C(역사/문화), F(도시/트렌드) 조합으로 여행지를 매칭합니다.
         </div>
 
-        {/* 결과 세팅 */}
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2 border-b pb-2">
             <span>🌍</span> 추천 랜드마크 설정
@@ -438,7 +472,6 @@ const AdminView = ({ questions, results, onSave, onBack }) => {
           ))}
         </section>
 
-        {/* 질문 세팅 */}
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2 border-b pb-2">
             <span>📝</span> 설문 문항 설정
@@ -518,14 +551,14 @@ export default function TravelTestApp() {
   const [scores, setScores] = useState({ A: 0, R: 0, C: 0, F: 0 });
   const [finalResultKey, setFinalResultKey] = useState(null);
 
-  // 로컬 환경에서 이전 버전 데이터가 남아 이미지 업데이트가 안 되는 것을 방지하기 위해 v5로 업데이트
+  // 캐시 방지를 위해 버전을 v7로 업데이트
   const [questions, setQuestions] = useState(() => {
-    const saved = localStorage.getItem('festivalQuestions_v5');
+    const saved = localStorage.getItem('festivalQuestions_v7');
     return saved ? JSON.parse(saved) : DEFAULT_QUESTIONS;
   });
   
   const [resultsData, setResultsData] = useState(() => {
-    const saved = localStorage.getItem('festivalResults_v5');
+    const saved = localStorage.getItem('festivalResults_v7');
     return saved ? JSON.parse(saved) : DEFAULT_RESULTS;
   });
 
@@ -542,9 +575,7 @@ export default function TravelTestApp() {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      // 상위 2개 성향 조합 추출
       const sortedTypes = Object.keys(newScores).sort((a, b) => {
-        // 동점일 경우 완벽한 랜덤 적용
         if (newScores[b] === newScores[a]) return Math.random() - 0.5;
         return newScores[b] - newScores[a];
       });
@@ -552,10 +583,8 @@ export default function TravelTestApp() {
       let top1 = sortedTypes[0];
       let top2 = sortedTypes[1];
       
-      // 조합키 생성 (알파벳 순서)
       let resultKey = [top1, top2].sort().join('_');
       
-      // 예외 처리 (폴백)
       if (top1 === top2 || !resultsData[resultKey]) {
         resultKey = `${top1}_${top1}`; 
         if(!resultsData[resultKey]){
@@ -575,8 +604,8 @@ export default function TravelTestApp() {
   const handleSaveAdmin = (newQuestions, newResults) => {
     setQuestions(newQuestions);
     setResultsData(newResults);
-    localStorage.setItem('festivalQuestions_v5', JSON.stringify(newQuestions));
-    localStorage.setItem('festivalResults_v5', JSON.stringify(newResults));
+    localStorage.setItem('festivalQuestions_v7', JSON.stringify(newQuestions));
+    localStorage.setItem('festivalResults_v7', JSON.stringify(newResults));
     setView('intro');
   };
 
