@@ -63,8 +63,8 @@ const DEFAULT_RESULTS = {
   "C_A": { type: "넵튠왕의 웅장한 역사", country: "독일", code: "DEU", flag: "🇩🇪", continent: "서유럽", spot: "쾰른 대성당", image: "https://images.unsplash.com/photo-1558988628-8fc873b37905?q=80&w=800&auto=format&fit=crop", reason: "압도적인 스케일과 깊은 역사를 사랑하는 당신! 바다왕 넵튠의 궁전처럼 웅장한 쾰른 대성당 앞에서 중세의 숨결을 느껴보세요.", features: "고딕 양식의 정수, 라인강의 기적, 웅장함", mapX: 49, mapY: 25 },
   // 도시(F) + 여유(R) 성향
   "F_R": { type: "스폰지밥의 자유로운 에너지", country: "미국", code: "USA", flag: "🇺🇸", continent: "북아메리카", spot: "자유의 여신상", image: "https://images.unsplash.com/photo-1605130284535-11dd9eedc58a?q=80&w=800&auto=format&fit=crop", reason: "현대적인 활기와 여유를 동시에 즐기는 당신! 스폰지밥처럼 긍정적인 에너지로 가득한 뉴욕에서 자유의 여신상을 바라보며 아메리칸 드림을 만끽해 보세요.", features: "세계의 중심, 다문화, 자유와 희망", mapX: 25, mapY: 33 },
-  // 문화(C) + 여유(R) 성향
-  "C_R": { type: "바다요정의 클래식 감성", country: "러시아", code: "RUS", flag: "🇷🇺", continent: "동유럽/북아시아", spot: "붉은 광장", image: "https://images.unsplash.com/photo-1513622470522-26c314a85ee8?q=80&w=800&auto=format&fit=crop", reason: "이국적이고 고풍스러운 문화를 선호하는 당신! 테트리스 성으로 유명한 성 바실리 대성당을 거닐며 동화 속 같은 클래식한 감성에 빠져보세요.", features: "동화 같은 건축물, 넓은 대륙, 독특한 문화", mapX: 60, mapY: 22 },
+  // 문화(C) + 여유(R) 성향 (첨부해주신 사진으로 이미지 경로 변경됨)
+  "C_R": { type: "바다요정의 클래식 감성", country: "러시아", code: "RUS", flag: "🇷🇺", continent: "동유럽/북아시아", spot: "붉은 광장", image: "/다운로드.jpg", reason: "이국적이고 고풍스러운 문화를 선호하는 당신! 테트리스 성으로 유명한 성 바실리 대성당을 거닐며 동화 속 같은 클래식한 감성에 빠져보세요.", features: "동화 같은 건축물, 넓은 대륙, 독특한 문화", mapX: 60, mapY: 22 },
   // 도시(F) + 문화(C) 성향 (호주)
   "F_C": { type: "세련된 해저 도시", country: "오스트레일리아", code: "AUS", flag: "🇦🇺", continent: "오세아니아", spot: "오페라 하우스", image: "https://images.unsplash.com/photo-1524823136585-610b70c3ba71?q=80&w=800&auto=format&fit=crop", reason: "세련된 건축물과 아름다운 항구를 사랑하는 당신! 조개껍데기를 닮은 오페라 하우스에서 품격 있는 시간을 보내보세요.", features: "세계 3대 미항, 현대 건축의 걸작, 남반구", mapX: 85, mapY: 80 },
   // 문화(C) + 문화(C) (강한 문화 성향 -> 한국 경주로 변경!)
@@ -583,13 +583,14 @@ export default function TravelTestApp() {
   const [scores, setScores] = useState({ A: 0, R: 0, C: 0, F: 0 });
   const [finalResultKey, setFinalResultKey] = useState(null);
 
+  // 로컬 환경에서 이전 버전 데이터가 남아 이미지 업데이트가 안 되는 것을 방지하기 위해 v4로 업데이트
   const [questions, setQuestions] = useState(() => {
-    const saved = localStorage.getItem('festivalQuestions_v3');
+    const saved = localStorage.getItem('festivalQuestions_v4');
     return saved ? JSON.parse(saved) : DEFAULT_QUESTIONS;
   });
   
   const [resultsData, setResultsData] = useState(() => {
-    const saved = localStorage.getItem('festivalResults_v3');
+    const saved = localStorage.getItem('festivalResults_v4');
     return saved ? JSON.parse(saved) : DEFAULT_RESULTS;
   });
 
@@ -634,8 +635,8 @@ export default function TravelTestApp() {
   const handleSaveAdmin = (newQuestions, newResults) => {
     setQuestions(newQuestions);
     setResultsData(newResults);
-    localStorage.setItem('festivalQuestions_v3', JSON.stringify(newQuestions));
-    localStorage.setItem('festivalResults_v3', JSON.stringify(newResults));
+    localStorage.setItem('festivalQuestions_v4', JSON.stringify(newQuestions));
+    localStorage.setItem('festivalResults_v4', JSON.stringify(newResults));
     setView('intro');
   };
 
