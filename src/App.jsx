@@ -1,86 +1,91 @@
 import React, { useState, useEffect } from 'react';
 
-// --- 스폰지밥 테마 질문 데이터 (12개 여행지 매칭은 유지) ---
-// A: 자연/액티비티 (다람이, 해파리 사냥), R: 여유/휴양 (뚱이, 평화), C: 역사/전통문화 (징징이 예술/클래식), F: 현대도시/트렌드 (스폰지밥 열정, 집게사장 비즈니스)
+// --- 스폰지밥 테마 질문 데이터 (12개로 확장하여 모든 성향 공평하게 배분) ---
+// A: 자연/액티비티, R: 여유/휴양, C: 역사/전통문화, F: 현대도시/트렌드
 const DEFAULT_QUESTIONS = [
   {
-    id: 1,
+    id: 1, // A vs R
     optionA: { text: "다람이와 함께 샌드보드 타러!\n거친 모래산으로 모험 떠나기", type: "A" },
-    optionB: { text: "스폰지밥과 함께 네온사인 반짝이는\n비키니 시티 다운타운 구경하기", type: "F" }
-  },
-  {
-    id: 2,
-    optionA: { text: "바다요정의 전설이 깃든\n고대 비키니 시티 유적지 탐험", type: "C" },
     optionB: { text: "뚱이처럼 바위 밑에 누워\n아무 생각 없이 하루 종일 멍때리기", type: "R" }
   },
   {
-    id: 3,
+    id: 2, // A vs C
     optionA: { text: "해파리 들판에서 뜰채 들고\n이리저리 뛰며 해파리 사냥하기", type: "A" },
-    optionB: { text: "징징이가 좋아하는\n우아하고 고상한 클라리넷 연주회 관람", type: "C" }
+    optionB: { text: "바다요정의 전설이 깃든\n고대 비키니 시티 유적지 탐험", type: "C" }
   },
   {
-    id: 4,
-    optionA: { text: "집게사장님과 함께 번화가에서\n새로운 트렌드와 비즈니스 탐색", type: "F" },
-    optionB: { text: "비눗방울 불면서 퐁퐁 터지는\n소리 들으며 평화롭게 산책하기", type: "R" }
+    id: 3, // A vs F
+    optionA: { text: "심해 깊은 곳, 불빛 하나 없는\n메롱시티 바닥까지 짜릿한 다이빙!", type: "A" },
+    optionB: { text: "스폰지밥과 함께 네온사인 반짝이는\n비키니 시티 다운타운 구경하기", type: "F" }
   },
   {
-    id: 5,
+    id: 4, // R vs C
+    optionA: { text: "비눗방울 불면서 퐁퐁 터지는\n소리 들으며 평화롭게 산책하기", type: "R" },
+    optionB: { text: "징징이가 좋아하는 우아하고\n고상한 클래식 연주회 관람하기", type: "C" }
+  },
+  {
+    id: 5, // R vs F
+    optionA: { text: "따뜻한 해저 화산 옆에서\n달콤한 게살버거 먹으며 힐링", type: "R" },
+    optionB: { text: "집게사장님과 함께 번화가에서\n새로운 트렌드와 비즈니스 탐색", type: "F" }
+  },
+  {
+    id: 6, // C vs F
     optionA: { text: "메롱시티의 기괴하고\n오래된 골목길 걸어보기", type: "C" },
     optionB: { text: "비키니 시티 최고 핫플!\n플랑크톤의 미끼식당(앞) 구경가기", type: "F" }
   },
   {
-    id: 6,
-    optionA: { text: "따뜻한 해저 화산 옆에서\n달콤한 게살버거 먹으며 힐링", type: "R" },
-    optionB: { text: "심해 깊은 곳, 불빛 하나 없는\n메롱시티 바닥까지 다이빙!", type: "A" }
-  },
-  {
-    id: 7,
-    optionA: { text: "고대 바다왕 넵튠의 궁전에서\n웅장한 건축물 감상하기", type: "C" },
+    id: 7, // A vs R
+    optionA: { text: "해적 선장의 유령선에 잠입해\n스릴 넘치는 보물찾기", type: "A" },
     optionB: { text: "산호초 사이를 여유롭게 헤엄치며\n아름다운 산호 숲 만끽하기", type: "R" }
   },
   {
-    id: 8,
-    optionA: { text: "해적 선장의 유령선에 잠입해\n스릴 넘치는 보물찾기", type: "A" },
+    id: 8, // A vs C
+    optionA: { text: "야생 바다벌레들이 우글거리는\n해저 동굴 탐험하기", type: "A" },
+    optionB: { text: "고대 바다왕 넵튠의 궁전에서\n웅장한 건축물 감상하기", type: "C" }
+  },
+  {
+    id: 9, // A vs F
+    optionA: { text: "거대한 해저 소용돌이를 타고\n짜릿한 롤러코스터 즐기기", type: "A" },
     optionB: { text: "비키니 시티 최신 유행!\n화려한 네온 조명의 파티 참석", type: "F" }
   },
   {
-    id: 9,
-    optionA: { text: "오래된 해저 케이블카를 타고\n비키니 시티의 클래식한 풍경 감상", type: "C" },
-    optionB: { text: "야생 바다벌레들이 우글거리는\n해저 동굴 탐험하기", type: "A" }
+    id: 10, // R vs C
+    optionA: { text: "구바다 호수 해변에서\n모래성 쌓으며 여유 즐기기", type: "R" },
+    optionB: { text: "오래된 해저 케이블카를 타고\n비키니 시티의 클래식한 풍경 감상", type: "C" }
   },
   {
-    id: 10,
-    optionA: { text: "구바다 호수 해변에서\n모래성 쌓으며 여유 즐기기", type: "R" },
+    id: 11, // R vs F
+    optionA: { text: "플로터 선장의 푹신한 배 위에서\n따뜻한 햇살 받으며 낮잠자기", type: "R" },
     optionB: { text: "비키니 시티 방송국 앞에서\n가장 트렌디한 하루 보내기", type: "F" }
+  },
+  {
+    id: 12, // C vs F
+    optionA: { text: "비키니 시티 역사 박물관에서\n최초의 게살버거 레시피 구경하기", type: "C" },
+    optionB: { text: "인플루언서 진주와 함께\n대형 쇼핑몰에서 신상 아이템 싹쓸이", type: "F" }
   }
 ];
 
-// --- 12개 여행지 결과 데이터 ---
+// --- 12개 여행지 결과 데이터 (1순위_2순위 조합으로 12개 완벽 분리) ---
 const DEFAULT_RESULTS = {
-  // 문화(C) + 도시(F) 성향
+  // 문화(C) 1순위 조합
   "C_F": { type: "징징이의 우아한 로맨틱", country: "프랑스", code: "FRA", flag: "🇫🇷", continent: "서유럽", spot: "에펠탑", image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=800&auto=format&fit=crop", reason: "예술을 사랑하는 징징이처럼 고상한 취향을 가진 당신! 예술과 낭만이 살아 숨 쉬는 파리에서 에펠탑의 반짝이는 야경을 감상해보세요.", features: "낭만의 도시, 예술의 중심지, 화려한 야경", mapX: 48, mapY: 28 },
-  // 문화(C) + 자연/기타 성향
   "C_A": { type: "넵튠왕의 웅장한 역사", country: "독일", code: "DEU", flag: "🇩🇪", continent: "서유럽", spot: "쾰른 대성당", image: "https://images.unsplash.com/photo-1558988628-8fc873b37905?q=80&w=800&auto=format&fit=crop", reason: "압도적인 스케일과 깊은 역사를 사랑하는 당신! 바다왕 넵튠의 궁전처럼 웅장한 쾰른 대성당 앞에서 중세의 숨결을 느껴보세요.", features: "고딕 양식의 정수, 라인강의 기적, 웅장함", mapX: 49, mapY: 25 },
-  // 도시(F) + 여유(R) 성향
-  "F_R": { type: "스폰지밥의 자유로운 에너지", country: "미국", code: "USA", flag: "🇺🇸", continent: "북아메리카", spot: "자유의 여신상", image: "https://images.unsplash.com/photo-1605130284535-11dd9eedc58a?q=80&w=800&auto=format&fit=crop", reason: "현대적인 활기와 여유를 동시에 즐기는 당신! 스폰지밥처럼 긍정적인 에너지로 가득한 뉴욕에서 자유의 여신상을 바라보며 아메리칸 드림을 만끽해 보세요.", features: "세계의 중심, 다문화, 자유와 희망", mapX: 25, mapY: 33 },
-  // 문화(C) + 여유(R) 성향 (첨부해주신 사진으로 이미지 경로 변경됨)
   "C_R": { type: "바다요정의 클래식 감성", country: "러시아", code: "RUS", flag: "🇷🇺", continent: "동유럽/북아시아", spot: "붉은 광장", image: "/다운로드.jpg", reason: "이국적이고 고풍스러운 문화를 선호하는 당신! 테트리스 성으로 유명한 성 바실리 대성당을 거닐며 동화 속 같은 클래식한 감성에 빠져보세요.", features: "동화 같은 건축물, 넓은 대륙, 독특한 문화", mapX: 60, mapY: 22 },
-  // 도시(F) + 문화(C) 성향 (호주)
-  "F_C": { type: "세련된 해저 도시", country: "오스트레일리아", code: "AUS", flag: "🇦🇺", continent: "오세아니아", spot: "오페라 하우스", image: "https://images.unsplash.com/photo-1524823136585-610b70c3ba71?q=80&w=800&auto=format&fit=crop", reason: "세련된 건축물과 아름다운 항구를 사랑하는 당신! 조개껍데기를 닮은 오페라 하우스에서 품격 있는 시간을 보내보세요.", features: "세계 3대 미항, 현대 건축의 걸작, 남반구", mapX: 85, mapY: 80 },
-  // 문화(C) + 문화(C) (강한 문화 성향 -> 한국 경주로 변경!)
-  "C_C": { type: "역사가 숨쉬는 시간여행", country: "대한민국", code: "KOR", flag: "🇰🇷", continent: "동아시아", spot: "경주 역사유적지구", image: "https://images.unsplash.com/photo-1590215752152-ed229df83ab7?q=80&w=800&auto=format&fit=crop", reason: "깊은 역사와 고즈넉한 문화를 사랑하는 당신! 천년의 신라 역사가 살아 숨 쉬는 경주 대릉원과 불국사에서 시간 여행을 떠나보세요.", features: "천년고도, 유네스코 세계유산, 고즈넉함", mapX: 83, mapY: 37 },
-  // 여유(R) + 도시(F) 성향 (쿠바)
-  "R_F": { type: "뚱이의 빈티지 낭만", country: "쿠바", code: "CUB", flag: "🇨🇺", continent: "카리브해", spot: "바라데로 해변", image: "https://images.unsplash.com/photo-1500331002237-7815de0b7c1e?q=80&w=800&auto=format&fit=crop", reason: "시간이 멈춘 듯한 낭만과 여유를 찾는 당신! 올드카가 달리는 아바나를 지나 눈부시게 하얀 해변에서 여유를 즐겨보세요.", features: "카리브해의 진주, 빈티지 감성, 살사 음악", mapX: 25, mapY: 45 },
-  // 자연(A) + 여유(R) 성향
-  "A_R": { type: "다람이의 알프스 힐링", country: "스위스", code: "CHE", flag: "🇨🇭", continent: "서유럽", spot: "마테호른", image: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=800&auto=format&fit=crop", reason: "깨끗한 자연 속에서 하이킹과 평화로운 휴식을 원하는 당신! 다람이가 좋아할 만한 뾰족한 마테호른 영봉을 보며 대자연의 힐링을 경험하세요.", features: "알프스의 혼, 청정 자연, 환상적인 뷰", mapX: 49, mapY: 30 },
-  // 도시(F) + 자연(A) 성향
-  "F_A": { type: "집게사장의 조화로운 감성", country: "캐나다", code: "CAN", flag: "🇨🇦", continent: "북아메리카", spot: "밴쿠버 개스타운", image: "https://images.unsplash.com/photo-1559511260-66a654ae982a?q=80&w=800&auto=format&fit=crop", reason: "세련된 도시 인프라와 아름다운 대자연을 동시에 누리고 싶은 당신! 증기시계가 있는 거리를 걷고, 곧바로 바다와 산으로 향할 수 있는 밴쿠버가 딱입니다.", features: "자연과 도시의 공존, 증기시계, 평화로움", mapX: 15, mapY: 25 },
-  // 자연(A) + 자연(A) (강한 자연 성향)
-  "A_A": { type: "해파리 사냥꾼의 대자연", country: "노르웨이", code: "NOR", flag: "🇳🇴", continent: "북유럽", spot: "피오르", image: "https://images.unsplash.com/photo-1513515822994-4d89069d3e8e?q=80&w=800&auto=format&fit=crop", reason: "깎아지른 절벽의 스릴을 즐기는 모험가! 해파리 들판을 뛰어다니는 열정으로 깊고 푸른 협곡, 피오르의 장엄한 대자연 속으로 떠나보세요.", features: "빙하 지형, 백야, 압도적인 자연경관", mapX: 48, mapY: 15 },
-  // 자연(A) + 문화/기타 성향
+
+  // 도시(F) 1순위 조합
+  "F_C": { type: "퐁퐁부인의 품격", country: "영국", code: "GBR", flag: "🇬🇧", continent: "서유럽", spot: "빅벤 (엘리자베스 타워)", image: "https://images.unsplash.com/photo-1520986606214-8b456906c813?q=80&w=800&auto=format&fit=crop", reason: "현대적인 세련됨과 클래식한 멋을 아는 당신! 템스강 변을 따라 들려오는 빅벤의 웅장한 종소리를 들으며 런던의 분위기를 만끽해 보세요.", features: "클래식 감성, 템스강, 영국 의회의 상징", mapX: 47, mapY: 26 },
+  "F_R": { type: "스폰지밥의 자유로운 에너지", country: "미국", code: "USA", flag: "🇺🇸", continent: "북아메리카", spot: "자유의 여신상", image: "https://images.unsplash.com/photo-1605130284535-11dd9eedc58a?q=80&w=800&auto=format&fit=crop", reason: "현대적인 활기와 여유를 동시에 즐기는 당신! 스폰지밥처럼 긍정적인 에너지로 가득한 뉴욕에서 자유의 여신상을 바라보며 아메리칸 드림을 만끽해 보세요.", features: "세계의 중심, 다문화, 자유와 희망", mapX: 25, mapY: 33 },
+  "F_A": { type: "세련된 해저 도시", country: "오스트레일리아", code: "AUS", flag: "🇦🇺", continent: "오세아니아", spot: "오페라 하우스", image: "https://images.unsplash.com/photo-1524823136585-610b70c3ba71?q=80&w=800&auto=format&fit=crop", reason: "세련된 건축물과 아름다운 항구, 대자연을 모두 사랑하는 당신! 조개껍데기를 닮은 오페라 하우스에서 품격 있는 시간을 보내보세요.", features: "세계 3대 미항, 현대 건축의 걸작, 남반구", mapX: 85, mapY: 80 },
+
+  // 자연(A) 1순위 조합
+  "A_F": { type: "집게사장의 조화로운 감성", country: "캐나다", code: "CAN", flag: "🇨🇦", continent: "북아메리카", spot: "밴쿠버 개스타운", image: "https://images.unsplash.com/photo-1559511260-66a654ae982a?q=80&w=800&auto=format&fit=crop", reason: "아름다운 대자연 속에서 세련된 인프라도 놓칠 수 없는 당신! 증기시계가 있는 거리를 걷고, 곧바로 바다와 산으로 향할 수 있는 밴쿠버가 딱입니다.", features: "자연과 도시의 공존, 증기시계, 평화로움", mapX: 15, mapY: 25 },
   "A_C": { type: "플랑크톤의 야생 매력", country: "남아프리카 공화국", code: "ZAF", flag: "🇿🇦", continent: "아프리카", spot: "테이블 마운틴", image: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?q=80&w=800&auto=format&fit=crop", reason: "거친 대자연과 독특한 문화가 공존하는 곳을 찾는 당신! 평평한 테이블 마운틴에 올라 대서양과 아프리카 대륙이 만나는 절경을 감상하세요.", features: "희귀한 식물군, 대서양 뷰, 아프리카의 끝", mapX: 52, mapY: 82 },
-  // 문화(C) + 여유/기타 성향 (영국)
-  "C_R2": { type: "퐁퐁부인의 품격", country: "영국", code: "GBR", flag: "🇬🇧", continent: "서유럽", spot: "빅벤 (엘리자베스 타워)", image: "https://images.unsplash.com/photo-1520986606214-8b456906c813?q=80&w=800&auto=format&fit=crop", reason: "클래식하고 신사적인 멋을 아는 당신! 템스강 변을 따라 들려오는 빅벤의 웅장한 종소리를 들으며 런던 특유의 우아하고 클래식한 분위기를 만끽해 보세요.", features: "클래식 감성, 템스강, 영국 의회의 상징", mapX: 47, mapY: 26 }
+  "A_R": { type: "해파리 사냥꾼의 대자연", country: "노르웨이", code: "NOR", flag: "🇳🇴", continent: "북유럽", spot: "피오르", image: "https://images.unsplash.com/photo-1513515822994-4d89069d3e8e?q=80&w=800&auto=format&fit=crop", reason: "거대한 자연이 주는 경외감과 힐링을 즐기는 당신! 해파리 들판을 뛰어다니는 열정으로 깊고 푸른 협곡, 피오르의 장엄한 대자연 속으로 떠나보세요.", features: "빙하 지형, 백야, 압도적인 자연경관", mapX: 48, mapY: 15 },
+
+  // 여유(R) 1순위 조합
+  "R_F": { type: "뚱이의 빈티지 낭만", country: "쿠바", code: "CUB", flag: "🇨🇺", continent: "카리브해", spot: "바라데로 해변", image: "https://images.unsplash.com/photo-1500331002237-7815de0b7c1e?q=80&w=800&auto=format&fit=crop", reason: "시간이 멈춘 듯한 낭만과 여유, 그리고 음악을 사랑하는 당신! 올드카가 달리는 아바나를 지나 눈부시게 하얀 해변에서 여유를 즐겨보세요.", features: "카리브해의 진주, 빈티지 감성, 살사 음악", mapX: 25, mapY: 45 },
+  "R_C": { type: "역사가 숨쉬는 시간여행", country: "대한민국", code: "KOR", flag: "🇰🇷", continent: "동아시아", spot: "경주 역사유적지구", image: "https://images.unsplash.com/photo-1590215752152-ed229df83ab7?q=80&w=800&auto=format&fit=crop", reason: "편안한 휴식 속에서 깊은 역사와 문화를 탐구하는 당신! 천년의 신라 역사가 살아 숨 쉬는 고즈넉한 경주에서 힐링 시간 여행을 떠나보세요.", features: "천년고도, 유네스코 세계유산, 고즈넉함", mapX: 83, mapY: 37 },
+  "R_A": { type: "다람이의 알프스 힐링", country: "스위스", code: "CHE", flag: "🇨🇭", continent: "서유럽", spot: "마테호른", image: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=800&auto=format&fit=crop", reason: "깨끗한 자연 속에서 하이킹과 완벽한 평화를 원하는 당신! 다람이가 좋아할 만한 뾰족한 마테호른 영봉을 보며 대자연의 힐링을 경험하세요.", features: "알프스의 혼, 청정 자연, 환상적인 뷰", mapX: 49, mapY: 30 }
 };
 
 
@@ -149,7 +154,7 @@ const IntroView = ({ onStart, onAdmin }) => (
 
 const LoadingView = () => (
   <div className="flex flex-col items-center justify-center h-full p-6 bg-cyan-900 text-white relative overflow-hidden">
-    {/* 물결 배경 애니메이션 효과 (CSS로 간단히 구현) */}
+    {/* 물결 배경 애니메이션 효과 */}
     <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-cyan-400 via-blue-500 to-transparent animate-pulse"></div>
     
     <div className="relative w-32 h-32 mb-8 z-10">
@@ -506,7 +511,7 @@ const AdminView = ({ questions, results, onSave, onBack }) => {
         {/* 질문 세팅 */}
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2 border-b pb-2">
-            <span>📝</span> 설문 문항 설정 (10개)
+            <span>📝</span> 설문 문항 설정 (12개)
           </h2>
           {editedQuestions.map((q, i) => (
             <div key={q.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
@@ -583,14 +588,14 @@ export default function TravelTestApp() {
   const [scores, setScores] = useState({ A: 0, R: 0, C: 0, F: 0 });
   const [finalResultKey, setFinalResultKey] = useState(null);
 
-  // 로컬 환경에서 이전 버전 데이터가 남아 이미지 업데이트가 안 되는 것을 방지하기 위해 v4로 업데이트
+  // 로컬 환경에서 이전 버전 데이터가 남아 알고리즘 업데이트가 안 되는 것을 방지하기 위해 v5로 업데이트
   const [questions, setQuestions] = useState(() => {
-    const saved = localStorage.getItem('festivalQuestions_v4');
+    const saved = localStorage.getItem('festivalQuestions_v5');
     return saved ? JSON.parse(saved) : DEFAULT_QUESTIONS;
   });
   
   const [resultsData, setResultsData] = useState(() => {
-    const saved = localStorage.getItem('festivalResults_v4');
+    const saved = localStorage.getItem('festivalResults_v5');
     return saved ? JSON.parse(saved) : DEFAULT_RESULTS;
   });
 
@@ -607,20 +612,24 @@ export default function TravelTestApp() {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      // 상위 2개 성향 조합 추출
-      const sortedTypes = Object.keys(newScores).sort((a, b) => newScores[b] - newScores[a]);
+      // 쏠림 현상 방지를 위해 성향 배열을 먼저 무작위로 섞음 (동점자 공정 처리)
+      let types = ['A', 'R', 'C', 'F'];
+      for (let i = types.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [types[i], types[j]] = [types[j], types[i]];
+      }
+
+      // 섞인 배열을 바탕으로 점수 순으로 정렬
+      const sortedTypes = types.sort((a, b) => newScores[b] - newScores[a]);
       let top1 = sortedTypes[0];
       let top2 = sortedTypes[1];
       
-      // 조합키 생성 (알파벳 순서)
-      let resultKey = [top1, top2].sort().join('_');
+      // 조합키 생성 (1순위_2순위 그대로 사용하여 12개 국가 완벽 대응)
+      let resultKey = `${top1}_${top2}`;
       
-      // 예외 처리 (폴백)
-      if (top1 === top2 || !resultsData[resultKey]) {
-        resultKey = `${top1}_${top1}`; 
-        if(!resultsData[resultKey]){
-           resultKey = Object.keys(resultsData)[0];
-        }
+      // 혹시 모를 에러를 위한 방어 로직
+      if (!resultsData[resultKey]) {
+         resultKey = Object.keys(resultsData)[0];
       }
 
       setFinalResultKey(resultKey);
@@ -635,8 +644,8 @@ export default function TravelTestApp() {
   const handleSaveAdmin = (newQuestions, newResults) => {
     setQuestions(newQuestions);
     setResultsData(newResults);
-    localStorage.setItem('festivalQuestions_v4', JSON.stringify(newQuestions));
-    localStorage.setItem('festivalResults_v4', JSON.stringify(newResults));
+    localStorage.setItem('festivalQuestions_v5', JSON.stringify(newQuestions));
+    localStorage.setItem('festivalResults_v5', JSON.stringify(newResults));
     setView('intro');
   };
 
