@@ -60,32 +60,32 @@ const DEFAULT_QUESTIONS = [
   },
   {
     id: 12, // C vs F
-    optionA: { text: "비키니 시티 역사 박물관에서\n최초의 게살버거 레시피 구경하기", type: "C" },
-    optionB: { text: "인플루언서 진주와 함께\n대형 쇼핑몰에서 신상 아이템 싹쓸이", type: "F" }
-  }
-];
-
-// --- 12개 여행지 결과 데이터 (1순위_2순위 조합으로 12개 완벽 분리) ---
+// --- 12개 여행지 결과 데이터 ---
 const DEFAULT_RESULTS = {
-  // 문화(C) 1순위 조합
-  "C_F": { type: "징징이의 우아한 로맨틱", country: "프랑스", code: "FRA", flag: "🇫🇷", continent: "서유럽", spot: "에펠탑", image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=800&auto=format&fit=crop", reason: "예술을 사랑하는 징징이처럼 고상한 취향을 가진 당신! 예술과 낭만이 살아 숨 쉬는 파리에서 에펠탑의 반짝이는 야경을 감상해보세요.", features: "낭만의 도시, 예술의 중심지, 화려한 야경", mapX: 48, mapY: 28 },
-  "C_A": { type: "넵튠왕의 웅장한 역사", country: "독일", code: "DEU", flag: "🇩🇪", continent: "서유럽", spot: "쾰른 대성당", image: "https://images.unsplash.com/photo-1558988628-8fc873b37905?q=80&w=800&auto=format&fit=crop", reason: "압도적인 스케일과 깊은 역사를 사랑하는 당신! 바다왕 넵튠의 궁전처럼 웅장한 쾰른 대성당 앞에서 중세의 숨결을 느껴보세요.", features: "고딕 양식의 정수, 라인강의 기적, 웅장함", mapX: 49, mapY: 25 },
+  // 문화(C) + 도시(F) 성향
+  "C_F": { type: "징징이의 우아한 로맨틱", country: "프랑스", code: "FRA", flag: "🇫🇷", continent: "서유럽", spot: "에펠탑", image: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=800&q=80", reason: "예술을 사랑하는 징징이처럼 고상한 취향을 가진 당신! 예술과 낭만이 살아 숨 쉬는 파리에서 에펠탑의 반짝이는 야경을 감상해보세요.", features: "낭만의 도시, 예술의 중심지, 화려한 야경", mapX: 48, mapY: 28 },
+  // 문화(C) + 자연/기타 성향
+  "C_A": { type: "넵튠왕의 웅장한 역사", country: "독일", code: "DEU", flag: "🇩🇪", continent: "서유럽", spot: "쾰른 대성당", image: "https://images.unsplash.com/photo-1596700080649-61f22e8eb606?auto=format&fit=crop&w=800&q=80", reason: "압도적인 스케일과 깊은 역사를 사랑하는 당신! 바다왕 넵튠의 궁전처럼 웅장한 쾰른 대성당 앞에서 중세의 숨결을 느껴보세요.", features: "고딕 양식의 정수, 라인강의 기적, 웅장함", mapX: 49, mapY: 25 },
+  // 도시(F) + 여유(R) 성향
+  "F_R": { type: "스폰지밥의 자유로운 에너지", country: "미국", code: "USA", flag: "🇺🇸", continent: "북아메리카", spot: "자유의 여신상", image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=800&q=80", reason: "현대적인 활기와 여유를 동시에 즐기는 당신! 스폰지밥처럼 긍정적인 에너지로 가득한 뉴욕에서 자유의 여신상을 바라보며 아메리칸 드림을 만끽해 보세요.", features: "세계의 중심, 다문화, 자유와 희망", mapX: 25, mapY: 33 },
+  // 문화(C) + 여유(R) 성향 (첨부해주신 사진으로 이미지 경로 변경됨)
   "C_R": { type: "바다요정의 클래식 감성", country: "러시아", code: "RUS", flag: "🇷🇺", continent: "동유럽/북아시아", spot: "붉은 광장", image: "/다운로드.jpg", reason: "이국적이고 고풍스러운 문화를 선호하는 당신! 테트리스 성으로 유명한 성 바실리 대성당을 거닐며 동화 속 같은 클래식한 감성에 빠져보세요.", features: "동화 같은 건축물, 넓은 대륙, 독특한 문화", mapX: 60, mapY: 22 },
-
-  // 도시(F) 1순위 조합
-  "F_C": { type: "퐁퐁부인의 품격", country: "영국", code: "GBR", flag: "🇬🇧", continent: "서유럽", spot: "빅벤 (엘리자베스 타워)", image: "https://images.unsplash.com/photo-1520986606214-8b456906c813?q=80&w=800&auto=format&fit=crop", reason: "현대적인 세련됨과 클래식한 멋을 아는 당신! 템스강 변을 따라 들려오는 빅벤의 웅장한 종소리를 들으며 런던의 분위기를 만끽해 보세요.", features: "클래식 감성, 템스강, 영국 의회의 상징", mapX: 47, mapY: 26 },
-  "F_R": { type: "스폰지밥의 자유로운 에너지", country: "미국", code: "USA", flag: "🇺🇸", continent: "북아메리카", spot: "자유의 여신상", image: "https://images.unsplash.com/photo-1605130284535-11dd9eedc58a?q=80&w=800&auto=format&fit=crop", reason: "현대적인 활기와 여유를 동시에 즐기는 당신! 스폰지밥처럼 긍정적인 에너지로 가득한 뉴욕에서 자유의 여신상을 바라보며 아메리칸 드림을 만끽해 보세요.", features: "세계의 중심, 다문화, 자유와 희망", mapX: 25, mapY: 33 },
-  "F_A": { type: "세련된 해저 도시", country: "오스트레일리아", code: "AUS", flag: "🇦🇺", continent: "오세아니아", spot: "오페라 하우스", image: "https://images.unsplash.com/photo-1524823136585-610b70c3ba71?q=80&w=800&auto=format&fit=crop", reason: "세련된 건축물과 아름다운 항구, 대자연을 모두 사랑하는 당신! 조개껍데기를 닮은 오페라 하우스에서 품격 있는 시간을 보내보세요.", features: "세계 3대 미항, 현대 건축의 걸작, 남반구", mapX: 85, mapY: 80 },
-
-  // 자연(A) 1순위 조합
-  "A_F": { type: "집게사장의 조화로운 감성", country: "캐나다", code: "CAN", flag: "🇨🇦", continent: "북아메리카", spot: "밴쿠버 개스타운", image: "https://images.unsplash.com/photo-1559511260-66a654ae982a?q=80&w=800&auto=format&fit=crop", reason: "아름다운 대자연 속에서 세련된 인프라도 놓칠 수 없는 당신! 증기시계가 있는 거리를 걷고, 곧바로 바다와 산으로 향할 수 있는 밴쿠버가 딱입니다.", features: "자연과 도시의 공존, 증기시계, 평화로움", mapX: 15, mapY: 25 },
-  "A_C": { type: "플랑크톤의 야생 매력", country: "남아프리카 공화국", code: "ZAF", flag: "🇿🇦", continent: "아프리카", spot: "테이블 마운틴", image: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?q=80&w=800&auto=format&fit=crop", reason: "거친 대자연과 독특한 문화가 공존하는 곳을 찾는 당신! 평평한 테이블 마운틴에 올라 대서양과 아프리카 대륙이 만나는 절경을 감상하세요.", features: "희귀한 식물군, 대서양 뷰, 아프리카의 끝", mapX: 52, mapY: 82 },
-  "A_R": { type: "해파리 사냥꾼의 대자연", country: "노르웨이", code: "NOR", flag: "🇳🇴", continent: "북유럽", spot: "피오르", image: "https://images.unsplash.com/photo-1513515822994-4d89069d3e8e?q=80&w=800&auto=format&fit=crop", reason: "거대한 자연이 주는 경외감과 힐링을 즐기는 당신! 해파리 들판을 뛰어다니는 열정으로 깊고 푸른 협곡, 피오르의 장엄한 대자연 속으로 떠나보세요.", features: "빙하 지형, 백야, 압도적인 자연경관", mapX: 48, mapY: 15 },
-
-  // 여유(R) 1순위 조합
-  "R_F": { type: "뚱이의 빈티지 낭만", country: "쿠바", code: "CUB", flag: "🇨🇺", continent: "카리브해", spot: "바라데로 해변", image: "https://images.unsplash.com/photo-1500331002237-7815de0b7c1e?q=80&w=800&auto=format&fit=crop", reason: "시간이 멈춘 듯한 낭만과 여유, 그리고 음악을 사랑하는 당신! 올드카가 달리는 아바나를 지나 눈부시게 하얀 해변에서 여유를 즐겨보세요.", features: "카리브해의 진주, 빈티지 감성, 살사 음악", mapX: 25, mapY: 45 },
-  "R_C": { type: "역사가 숨쉬는 시간여행", country: "대한민국", code: "KOR", flag: "🇰🇷", continent: "동아시아", spot: "경주 역사유적지구", image: "https://images.unsplash.com/photo-1590215752152-ed229df83ab7?q=80&w=800&auto=format&fit=crop", reason: "편안한 휴식 속에서 깊은 역사와 문화를 탐구하는 당신! 천년의 신라 역사가 살아 숨 쉬는 고즈넉한 경주에서 힐링 시간 여행을 떠나보세요.", features: "천년고도, 유네스코 세계유산, 고즈넉함", mapX: 83, mapY: 37 },
-  "R_A": { type: "다람이의 알프스 힐링", country: "스위스", code: "CHE", flag: "🇨🇭", continent: "서유럽", spot: "마테호른", image: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=800&auto=format&fit=crop", reason: "깨끗한 자연 속에서 하이킹과 완벽한 평화를 원하는 당신! 다람이가 좋아할 만한 뾰족한 마테호른 영봉을 보며 대자연의 힐링을 경험하세요.", features: "알프스의 혼, 청정 자연, 환상적인 뷰", mapX: 49, mapY: 30 }
+  // 도시(F) + 문화(C) 성향 (호주)
+  "F_C": { type: "세련된 해저 도시", country: "오스트레일리아", code: "AUS", flag: "🇦🇺", continent: "오세아니아", spot: "오페라 하우스", image: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=800&q=80", reason: "세련된 건축물과 아름다운 항구를 사랑하는 당신! 조개껍데기를 닮은 오페라 하우스에서 품격 있는 시간을 보내보세요.", features: "세계 3대 미항, 현대 건축의 걸작, 남반구", mapX: 85, mapY: 80 },
+  // 문화(C) + 문화(C) (강한 문화 성향 -> 한국 경주로 변경!)
+  "C_C": { type: "역사가 숨쉬는 시간여행", country: "대한민국", code: "KOR", flag: "🇰🇷", continent: "동아시아", spot: "경주 역사유적지구", image: "https://images.unsplash.com/photo-1515091943-9d5c0ad475af?auto=format&fit=crop&w=800&q=80", reason: "깊은 역사와 고즈넉한 문화를 사랑하는 당신! 천년의 신라 역사가 살아 숨 쉬는 경주 대릉원과 불국사에서 시간 여행을 떠나보세요.", features: "천년고도, 유네스코 세계유산, 고즈넉함", mapX: 83, mapY: 37 },
+  // 여유(R) + 도시(F) 성향 (쿠바)
+  "R_F": { type: "뚱이의 빈티지 낭만", country: "쿠바", code: "CUB", flag: "🇨🇺", continent: "카리브해", spot: "바라데로 해변", image: "https://images.unsplash.com/photo-1517457224213-90d5cded4c79?auto=format&fit=crop&w=800&q=80", reason: "시간이 멈춘 듯한 낭만과 여유를 찾는 당신! 올드카가 달리는 아바나를 지나 눈부시게 하얀 해변에서 여유를 즐겨보세요.", features: "카리브해의 진주, 빈티지 감성, 살사 음악", mapX: 25, mapY: 45 },
+  // 자연(A) + 여유(R) 성향
+  "A_R": { type: "다람이의 알프스 힐링", country: "스위스", code: "CHE", flag: "🇨🇭", continent: "서유럽", spot: "마테호른", image: "https://images.unsplash.com/photo-1531366936336-ce605caeb114?auto=format&fit=crop&w=800&q=80", reason: "깨끗한 자연 속에서 하이킹과 평화로운 휴식을 원하는 당신! 다람이가 좋아할 만한 뾰족한 마테호른 영봉을 보며 대자연의 힐링을 경험하세요.", features: "알프스의 혼, 청정 자연, 환상적인 뷰", mapX: 49, mapY: 30 },
+  // 도시(F) + 자연(A) 성향
+  "F_A": { type: "집게사장의 조화로운 감성", country: "캐나다", code: "CAN", flag: "🇨🇦", continent: "북아메리카", spot: "밴쿠버 개스타운", image: "https://images.unsplash.com/photo-1522115993206-8d80e1bb4251?auto=format&fit=crop&w=800&q=80", reason: "세련된 도시 인프라와 아름다운 대자연을 동시에 누리고 싶은 당신! 증기시계가 있는 거리를 걷고, 곧바로 바다와 산으로 향할 수 있는 밴쿠버가 딱입니다.", features: "자연과 도시의 공존, 증기시계, 평화로움", mapX: 15, mapY: 25 },
+  // 자연(A) + 자연(A) (강한 자연 성향)
+  "A_A": { type: "해파리 사냥꾼의 대자연", country: "노르웨이", code: "NOR", flag: "🇳🇴", continent: "북유럽", spot: "피오르", image: "https://images.unsplash.com/photo-1504825946894-31eedbce385b?auto=format&fit=crop&w=800&q=80", reason: "깎아지른 절벽의 스릴을 즐기는 모험가! 해파리 들판을 뛰어다니는 열정으로 깊고 푸른 협곡, 피오르의 장엄한 대자연 속으로 떠나보세요.", features: "빙하 지형, 백야, 압도적인 자연경관", mapX: 48, mapY: 15 },
+  // 자연(A) + 문화/기타 성향
+  "A_C": { type: "플랑크톤의 야생 매력", country: "남아프리카 공화국", code: "ZAF", flag: "🇿🇦", continent: "아프리카", spot: "테이블 마운틴", image: "https://images.unsplash.com/photo-1518182170546-076616fd61fa?auto=format&fit=crop&w=800&q=80", reason: "거친 대자연과 독특한 문화가 공존하는 곳을 찾는 당신! 평평한 테이블 마운틴에 올라 대서양과 아프리카 대륙이 만나는 절경을 감상하세요.", features: "희귀한 식물군, 대서양 뷰, 아프리카의 끝", mapX: 52, mapY: 82 },
+  // 문화(C) + 여유/기타 성향 (영국)
+  "C_R2": { type: "퐁퐁부인의 품격", country: "영국", code: "GBR", flag: "🇬🇧", continent: "서유럽", spot: "빅벤 (엘리자베스 타워)", image: "https://images.unsplash.com/photo-1513635269975-59693e098dc6?auto=format&fit=crop&w=800&q=80", reason: "클래식하고 신사적인 멋을 아는 당신! 템스강 변을 따라 들려오는 빅벤의 웅장한 종소리를 들으며 런던 특유의 우아하고 클래식한 분위기를 만끽해 보세요.", features: "클래식 감성, 템스강, 영국 의회의 상징", mapX: 47, mapY: 26 }
 };
 
 
@@ -295,7 +295,7 @@ const ResultView = ({ result, onRestart }) => {
                 src={result.image} 
                 alt={result.spot} 
                 className="absolute inset-0 w-full h-full object-cover"
-                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800'; }}
+                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80'; }}
               />
             </div>
             <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[11px] font-black text-pink-600 shadow-md border-2 border-pink-200 flex items-center gap-1 z-10">
@@ -588,7 +588,7 @@ export default function TravelTestApp() {
   const [scores, setScores] = useState({ A: 0, R: 0, C: 0, F: 0 });
   const [finalResultKey, setFinalResultKey] = useState(null);
 
-  // 로컬 환경에서 이전 버전 데이터가 남아 알고리즘 업데이트가 안 되는 것을 방지하기 위해 v5로 업데이트
+  // 로컬 환경에서 이전 버전 데이터가 남아 이미지 업데이트가 안 되는 것을 방지하기 위해 v5로 업데이트
   const [questions, setQuestions] = useState(() => {
     const saved = localStorage.getItem('festivalQuestions_v5');
     return saved ? JSON.parse(saved) : DEFAULT_QUESTIONS;
